@@ -58,6 +58,34 @@ app.put('/shoppinglist', async (req, res) => {
     }
 })
 
+
+app.put('/updateItemDone', async (req, res) => {
+    const { shoppingListId, name, done } = req.body
+
+    try {
+
+        const ref = await db.collection('shoppinglist').doc(shoppingListId);
+        let doc = await db.collection('shoppinglist').doc(shoppingListId).get();
+        let itemsList = doc.data().items
+        console.log(itemsList);
+
+        const itemIndex = itemsList.findIndex(i => i.name === name);
+        itemsList[itemIndex].done = done;
+        await ref.update({
+            items: itemsList
+        })
+
+        res.json({ message: 'funkade säkert' })
+
+    } catch (err) {
+        console.error(err);
+        res.json({ message: 'funkar inte!' })
+    }
+
+})
+
+
+
 app.listen(1234, () => {
     console.log('ah, den är uppe');
 })
